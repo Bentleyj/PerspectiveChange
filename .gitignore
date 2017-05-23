@@ -15,7 +15,7 @@ Builds/
 # Put Big Files Here #
 StreamingAssets/
 
-PostProcessing/
+Assets/Plugins/PostProcessing/
 
 # Builds Folder and any rogue build files
 Builds/
