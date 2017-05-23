@@ -7,6 +7,7 @@ public class PlayerMount : MonoBehaviour {
 
     public GameObject avatar;
     public VRInteractiveItem interactiveItem;
+    public bool isMounted;
 
 	// Use this for initialization
 	void Start () {

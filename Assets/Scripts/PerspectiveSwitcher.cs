@@ -11,7 +11,6 @@ public class PerspectiveSwitcher : MonoBehaviour {
     public float transferSpeed;
     public float loadSpeed;
     public Image reticle;
-    private Transform target;
     private Coroutine lastCoroutine;
 
 	// Use this for initialization
@@ -47,36 +46,39 @@ public class PerspectiveSwitcher : MonoBehaviour {
 
     void startLoad()
     {
-        lastCoroutine = StartCoroutine(Load());
+        PlayerMount targettedMount = getTargettedMount();
+        if(targettedMount)
+        {
+            if (!targettedMount.isMounted)
+            {
+                lastCoroutine = StartCoroutine(Load(targettedMount));
+            }
+        }
     }
 
-    IEnumerator Load()
+    IEnumerator Load(PlayerMount targettedMount)
     {
         while(reticle.fillAmount < 1.0)
         {
             reticle.fillAmount += loadSpeed;
             yield return null;
         }
-        startSwitch();
+        for(int i = 0; i < mounts.Length; i++)
+        {
+            mounts[i].isMounted = false;
+        }
+        startSwitch(targettedMount);
     }
 
-    void startSwitch()
+    void startSwitch(PlayerMount targettedMount)
     {
         stopLoad();
-        StartCoroutine(switchPerspective());
+        StartCoroutine(switchPerspective(targettedMount));
     }
 
-    IEnumerator switchPerspective()
+    IEnumerator switchPerspective(PlayerMount targettedMount)
     {
-        for (int i = 0; i < mounts.Length; i++)
-        {
-            if (mounts[i].interactiveItem.IsOver)
-            {
-                target = mounts[i].transform;
-                break;
-            }
-
-        }
+        Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
         while (dist > 0.01)
         {
@@ -84,5 +86,18 @@ public class PerspectiveSwitcher : MonoBehaviour {
             dist = (target.position - transform.position).magnitude;
             yield return null;
         }
+        targettedMount.isMounted = true;
+    }
+
+    PlayerMount getTargettedMount()
+    {
+        for (int i = 0; i < mounts.Length; i++)
+        {
+            if (mounts[i].interactiveItem.IsOver)
+            {
+                return mounts[i];
+            }
+        }
+        return null;
     }
 }
