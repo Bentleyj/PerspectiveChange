@@ -18,7 +18,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     public float transferSpeed;     // The speed at which you teleport to the location.
     public float loadSpeed;         // The time you need to focus on any mount before your perspective is changed to it.
     public Image reticle;           // A Reference to the targetting Reticle Image that we need to fill up.
-    private Coroutine lastCoroutine; // A reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
+    private Coroutine lastCoroutine; // A Reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
 
 	// Use this for initialization
 	void Start () {
