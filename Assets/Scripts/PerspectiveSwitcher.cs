@@ -4,28 +4,37 @@ using UnityEngine;
 using VRStandardAssets.Utils;
 using UnityEngine.UI;
 
+// Written by James Bentley 19th May 2017
+// Last updated 23rd of May 2017
+// The intention of this class is to be attached to a camera which allows 
+// the camera to switch it's position between various objects in the scene
+// All the coroutines make it look scary but it's actually pretty simple!
+
+// Basically This class subscribes to events called by VRInteractiveObjects in the scene. 
+// The PlayerMount script sits on a prefab in my scene which includes a VRInteractiveItem as well as the PlayerMount script whcih hold several fields that are useful. 
 public class PerspectiveSwitcher : MonoBehaviour {
 
-    private PlayerMount[] mounts;
-
-    public float transferSpeed;
-    public float loadSpeed;
-    public Image reticle;
-    private Coroutine lastCoroutine;
+    private PlayerMount[] mounts;   // A list of all the PlayerMount objects in the scene. PlayerMounts are what we can sit atop.
+    public float transferSpeed;     // The speed at which you teleport to the location.
+    public float loadSpeed;         // The time you need to focus on any mount before your perspective is changed to it.
+    public Image reticle;           // A Reference to the targetting Reticle Image that we need to fill up.
+    private Coroutine lastCoroutine; // A reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
 
 	// Use this for initialization
 	void Start () {
+        // Here we find all the mPlayerMount objects in the scene and add our callbacks to their events.
         mounts = FindObjectsOfType<PlayerMount>();
         for(int i = 0; i < mounts.Length; i++)
         {
             mounts[i].interactiveItem.OnOver += startLoad;
             mounts[i].interactiveItem.OnOut += stopLoad;
         }
-
     }
 
+    // This is called when we disbale our object
     private void OnDisable()
     {
+        //Make sure we remove the callbacks so we don't get a memory leak.
         for (int i = 0; i < mounts.Length; i++)
         {
             mounts[i].interactiveItem.OnOver -= startLoad;
@@ -38,13 +47,15 @@ public class PerspectiveSwitcher : MonoBehaviour {
 
     }
 
-    void stopLoad()
+    // This method stops the "Load" method which is called when the OnOut event.
+    public void stopLoad()
     {
         StopCoroutine(lastCoroutine);
         reticle.fillAmount = 0;
     }
 
-    void startLoad()
+    // Starts the coroutine that starts a timer which counts down until we transition to the new mount position
+    public void startLoad()
     {
         PlayerMount targettedMount = getTargettedMount();
         if(targettedMount)
@@ -56,7 +67,8 @@ public class PerspectiveSwitcher : MonoBehaviour {
         }
     }
 
-    IEnumerator Load(PlayerMount targettedMount)
+    // This is the coroutine which Loads up the reticle. Once the while loop is finished we switch our perspective to the new mount
+    private IEnumerator Load(PlayerMount targettedMount)
     {
         while(reticle.fillAmount < 1.0)
         {
@@ -70,13 +82,15 @@ public class PerspectiveSwitcher : MonoBehaviour {
         startSwitch(targettedMount);
     }
 
-    void startSwitch(PlayerMount targettedMount)
+    // This kicks off hte coroutine which changes the perspective
+    public void startSwitch(PlayerMount targettedMount)
     {
         stopLoad();
         StartCoroutine(switchPerspective(targettedMount));
     }
 
-    IEnumerator switchPerspective(PlayerMount targettedMount)
+    // Here's the coroutine which moves the player to the new perspective
+    private IEnumerator switchPerspective(PlayerMount targettedMount)
     {
         Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
@@ -89,7 +103,8 @@ public class PerspectiveSwitcher : MonoBehaviour {
         targettedMount.isMounted = true;
     }
 
-    PlayerMount getTargettedMount()
+    // This is a utility function that gets the current targetted mount using it/s "IsOver" field.
+    private PlayerMount getTargettedMount()
     {
         for (int i = 0; i < mounts.Length; i++)
         {
