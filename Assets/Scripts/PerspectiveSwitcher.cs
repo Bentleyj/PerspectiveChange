@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class PerspectiveSwitcher : MonoBehaviour {
 
-    public PlayerMount[] mounts;
+    private PlayerMount[] mounts;
 
     public float transferSpeed;
     public float loadSpeed;
-    private Transform target;
     public Image reticle;
+    private Transform target;
     private Coroutine lastCoroutine;
 
 	// Use this for initialization
@@ -41,14 +41,12 @@ public class PerspectiveSwitcher : MonoBehaviour {
 
     void stopLoad()
     {
-        Debug.Log("stopLoad Called!");
         StopCoroutine(lastCoroutine);
         reticle.fillAmount = 0;
     }
 
     void startLoad()
     {
-        Debug.Log("startLoad Called!");
         lastCoroutine = StartCoroutine(Load());
     }
 
@@ -64,14 +62,12 @@ public class PerspectiveSwitcher : MonoBehaviour {
 
     void startSwitch()
     {
-        Debug.Log("startSwitch Called!");
         stopLoad();
         StartCoroutine(switchPerspective());
     }
 
     IEnumerator switchPerspective()
     {
-        Debug.Log("Switching!");
         for (int i = 0; i < mounts.Length; i++)
         {
             if (mounts[i].interactiveItem.IsOver)
@@ -84,7 +80,6 @@ public class PerspectiveSwitcher : MonoBehaviour {
         float dist = (target.position - transform.position).magnitude;
         while (dist > 0.01)
         {
-            Debug.Log("Going!");
             transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
             dist = (target.position - transform.position).magnitude;
             yield return null;
