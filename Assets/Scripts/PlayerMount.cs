@@ -16,7 +16,7 @@ public class PlayerMount : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         // Find the VRInteractiveItem in the children
-        if(avatar.GetComponent<VRInteractiveItem>() == null)
+        if(!(interactiveItem = avatar.GetComponent<VRInteractiveItem>()))
             interactiveItem = avatar.AddComponent<VRInteractiveItem>();
 	}
 	
