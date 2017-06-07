@@ -94,12 +94,13 @@ public class PerspectiveSwitcher : MonoBehaviour {
     {
         Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
-        while (dist > 0.01)
+        while (dist > 0.5)
         {
             transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
             dist = (target.position - transform.position).magnitude;
             yield return null;
         }
+        this.transform.SetParent(target);
         targettedMount.isMounted = true;
     }
 

@@ -19,6 +19,8 @@ Assets/Plugins/PostProcessing/
 
 Models/
 
+Textures/
+
 # Builds Folder and any rogue build files
 Builds/
 # any stray build files should get cleaned up by this but for some reason it's not working properly.

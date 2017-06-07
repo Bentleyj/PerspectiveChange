@@ -22,6 +22,9 @@ public class PlayerMount : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (isMounted)
+            avatar.SetActive(false);
+        else
+            avatar.SetActive(true);
 	}
 }
