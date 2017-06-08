@@ -6,6 +6,7 @@ public class Target : MonoBehaviour {
 
     public PlayerMount follower;
     public Animator anim;
+
     private void Start()
     {
         if(!anim)

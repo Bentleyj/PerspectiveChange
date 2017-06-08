@@ -10,21 +10,49 @@ using VRStandardAssets.Utils;
 public class PlayerMount : MonoBehaviour {
 
     public GameObject avatar;
+    public GameObject[] mountableAvatarParts;
     public VRInteractiveItem interactiveItem;
+    [HideInInspector]
     public bool isMounted;
+    public Transform originalAvatarTransform;
+
+    public Material filter;
 
 	// Use this for initialization
 	void Start () {
         // Find the VRInteractiveItem in the children
         if(!(interactiveItem = avatar.GetComponent<VRInteractiveItem>()))
             interactiveItem = avatar.AddComponent<VRInteractiveItem>();
+        if (avatar)
+            originalAvatarTransform = avatar.transform;
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
-        if (isMounted)
-            avatar.SetActive(false);
-        else
-            avatar.SetActive(true);
-	}
+
+    private void OnEnable()
+    {
+        PerspectiveSwitcher.OnMount += setupMount;
+        PerspectiveSwitcher.OnStartSwitch += leaveMount;
+    }
+
+
+    private void OnDisable()
+    {
+        PerspectiveSwitcher.OnMount -= setupMount;
+        PerspectiveSwitcher.OnStartSwitch -= leaveMount;
+    }
+
+    void setupMount()
+    {
+        //this.avatar.transform.SetParent(this.transform);
+    }
+
+    void leaveMount()
+    {
+        for (int i = 0; i < mountableAvatarParts.Length; i++)
+        {
+            mountableAvatarParts[i].SetActive(true);
+        }
+        //this.avatar.transform.rotation = originalAvatarTransform.rotation;
+        this.transform.parent = null;
+    }
 }

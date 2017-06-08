@@ -22,8 +22,11 @@ public class PerspectiveSwitcher : MonoBehaviour {
     public delegate void MountAction();
     public static event MountAction OnMount;
 
-	// Use this for initialization
-	void Start () {
+    public delegate void SwitchAction();
+    public static event SwitchAction OnStartSwitch;
+
+    // Use this for initialization
+    void Start () {
         // Here we find all the mPlayerMount objects in the scene and add our callbacks to their events.
         mounts = FindObjectsOfType<PlayerMount>();
         for(int i = 0; i < mounts.Length; i++)
@@ -46,7 +49,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-
+        Debug.DrawLine(transform.position, transform.position + transform.forward * 10);
     }
 
     // This method stops the "Load" method which is called when the OnOut event.
@@ -88,6 +91,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     public void startSwitch(PlayerMount targettedMount)
     {
         stopLoad();
+        OnStartSwitch();
         StartCoroutine(switchPerspective(targettedMount));
     }
 
@@ -96,14 +100,25 @@ public class PerspectiveSwitcher : MonoBehaviour {
     {
         Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
-        while (dist > 0.5)
+        while (dist > 0.1)
         {
             transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
+            targettedMount.transform.rotation = Quaternion.Lerp(targettedMount.transform.rotation, this.transform.rotation, transferSpeed);
+            //transform.rotation = target.rotation;// Quaternion.Lerp(transform.rotation, target.rotation, transferSpeed);
             dist = (target.position - transform.position).magnitude;
             yield return null;
         }
-        this.transform.SetParent(target);
+        //yield return null;
         targettedMount.isMounted = true;
+        //targettedMount.transform.LookAt(this.transform.position + this.transform.forward);
+        for (int i = 0; i < targettedMount.mountableAvatarParts.Length; i++)
+        {
+            targettedMount.mountableAvatarParts[i].SetActive(false);
+        }
+        //yield return null;
+        targettedMount.transform.rotation = this.transform.rotation;
+        targettedMount.transform.SetParent(this.transform);
+
         if (OnMount != null)
             OnMount();
     }
