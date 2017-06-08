@@ -39,7 +39,6 @@ namespace VRStandardAssets.Utils
         public void Over()
         {
             m_IsOver = true;
-            Debug.Log("Over!");
 
 			if (OnOver != null) 
 				OnOver();

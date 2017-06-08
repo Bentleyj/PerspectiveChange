@@ -26,7 +26,6 @@ public class Target : MonoBehaviour {
 
     void StopAnimating()
     {
-        Debug.Log("StopAnimating Called");
         if (follower.isMounted)
             if (anim != null)
                 anim.enabled = false;
@@ -35,7 +34,6 @@ public class Target : MonoBehaviour {
 
     void StartAnimating()
     {
-        Debug.Log("StartAnimating Called");
         if (!follower.isMounted)
             if (anim != null)
                 anim.enabled = true;
