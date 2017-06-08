@@ -19,6 +19,8 @@ public class PerspectiveSwitcher : MonoBehaviour {
     public float loadSpeed;         // The time you need to focus on any mount before your perspective is changed to it.
     public Image reticle;           // A Reference to the targetting Reticle Image that we need to fill up.
     private Coroutine lastCoroutine; // A Reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
+    public delegate void MountAction();
+    public static event MountAction OnMount;
 
 	// Use this for initialization
 	void Start () {
@@ -102,6 +104,8 @@ public class PerspectiveSwitcher : MonoBehaviour {
         }
         this.transform.SetParent(target);
         targettedMount.isMounted = true;
+        if (OnMount != null)
+            OnMount();
     }
 
     // This is a utility function that gets the current targetted mount using it/s "IsOver" field.
