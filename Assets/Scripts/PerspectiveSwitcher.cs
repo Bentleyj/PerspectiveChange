@@ -100,8 +100,9 @@ public class PerspectiveSwitcher : MonoBehaviour {
     {
         Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
-        while (dist > 0.1)
+        while (dist > 0.4)
         {
+            Debug.Log(target.position.x);
             transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
             targettedMount.transform.rotation = Quaternion.Lerp(targettedMount.transform.rotation, this.transform.rotation, transferSpeed);
             //transform.rotation = target.rotation;// Quaternion.Lerp(transform.rotation, target.rotation, transferSpeed);
