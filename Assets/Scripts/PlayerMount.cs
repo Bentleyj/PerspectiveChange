@@ -12,6 +12,7 @@ public class PlayerMount : MonoBehaviour {
     public GameObject avatar;
     public GameObject[] mountableAvatarParts;
     public VRInteractiveItem interactiveItem;
+    public Material AvatarMaterial;
     [HideInInspector]
     public bool isMounted;
     public Transform originalAvatarTransform;
@@ -25,8 +26,9 @@ public class PlayerMount : MonoBehaviour {
             interactiveItem = avatar.AddComponent<VRInteractiveItem>();
         if (avatar)
             originalAvatarTransform = avatar.transform;
+        Debug.Log("Avatar Material: " + AvatarMaterial);
 
-	}
+    }
 
     private void OnEnable()
     {
@@ -52,7 +54,12 @@ public class PlayerMount : MonoBehaviour {
         {
             mountableAvatarParts[i].SetActive(true);
         }
+        Color col = AvatarMaterial.GetColor("_Color");
+        col.a = 1;
+        AvatarMaterial.SetColor("_Color", col);
         //this.avatar.transform.rotation = originalAvatarTransform.rotation;
         this.transform.parent = null;
+        //this.transform.position = originalAvatarTransform.position;
+        //this.transform.rotation = originalAvatarTransform.rotation;
     }
 }

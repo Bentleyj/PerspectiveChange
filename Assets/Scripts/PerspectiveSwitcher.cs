@@ -21,6 +21,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     private Coroutine lastCoroutine; // A Reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
     public delegate void MountAction();
     public static event MountAction OnMount;
+    public AudioSource audio;
 
     public delegate void SwitchAction();
     public static event SwitchAction OnStartSwitch;
@@ -34,6 +35,9 @@ public class PerspectiveSwitcher : MonoBehaviour {
             mounts[i].interactiveItem.OnOver += startLoad;
             mounts[i].interactiveItem.OnOut += stopLoad;
         }
+
+        if (!audio)
+            audio = FindObjectOfType<AudioSource>();
     }
 
     // This is called when we disbale our object
@@ -92,6 +96,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     {
         stopLoad();
         OnStartSwitch();
+        audio.Play();
         StartCoroutine(switchPerspective(targettedMount));
     }
 
@@ -100,13 +105,17 @@ public class PerspectiveSwitcher : MonoBehaviour {
     {
         Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
+        Material mat = targettedMount.AvatarMaterial;
         while (dist > 0.4)
         {
-            Debug.Log(target.position.x);
             transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
             targettedMount.transform.rotation = Quaternion.Lerp(targettedMount.transform.rotation, this.transform.rotation, transferSpeed);
             //transform.rotation = target.rotation;// Quaternion.Lerp(transform.rotation, target.rotation, transferSpeed);
             dist = (target.position - transform.position).magnitude;
+            Color col = mat.GetColor("_Color");
+            col.a = Mathf.Lerp(col.a, 0, transferSpeed/2);
+            mat.SetColor("_Color", col);
+            //targettedMount.avatarMaterial.SetColor("Albedo",)
             yield return null;
         }
         //yield return null;
