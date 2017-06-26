@@ -14,11 +14,11 @@ using UnityEngine.UI;
 // The PlayerMount script sits on a prefab in my scene which includes a VRInteractiveItem as well as the PlayerMount script whcih hold several fields that are useful. 
 public class PerspectiveSwitcher : MonoBehaviour {
 
-    private PlayerMount[] mounts;   // A list of all the PlayerMount objects in the scene. PlayerMounts are what we can sit atop.
+    protected PlayerMount[] mounts;   // A list of all the PlayerMount objects in the scene. PlayerMounts are what we can sit atop.
     public float transferSpeed;     // The speed at which you teleport to the location.
     public float loadSpeed;         // The time you need to focus on any mount before your perspective is changed to it.
     public Image reticle;           // A Reference to the targetting Reticle Image that we need to fill up.
-    private Coroutine lastCoroutine; // A Reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
+    protected Coroutine lastCoroutine; // A Reference to the last coroutine we called (the load coroutine) so we can kill it if we need to
     public delegate void MountAction();
     public static event MountAction OnMount;
     public AudioSource audio;
@@ -27,7 +27,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     public static event SwitchAction OnStartSwitch;
 
     // Use this for initialization
-    void Start () {
+    protected void Start () {
         // Here we find all the mPlayerMount objects in the scene and add our callbacks to their events.
         mounts = FindObjectsOfType<PlayerMount>();
         for(int i = 0; i < mounts.Length; i++)
@@ -41,7 +41,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     }
 
     // This is called when we disbale our object
-    private void OnDisable()
+    protected void OnDisable()
     {
         //Make sure we remove the callbacks so we don't get a memory leak.
         for (int i = 0; i < mounts.Length; i++)
@@ -52,7 +52,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    protected void Update () {
         Debug.DrawLine(transform.position, transform.position + transform.forward * 10);
     }
 
@@ -77,7 +77,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     }
 
     // This is the coroutine which Loads up the reticle. Once the while loop is finished we switch our perspective to the new mount
-    private IEnumerator Load(PlayerMount targettedMount)
+    protected IEnumerator Load(PlayerMount targettedMount)
     {
         while(reticle.fillAmount < 1.0)
         {
@@ -91,30 +91,26 @@ public class PerspectiveSwitcher : MonoBehaviour {
         startSwitch(targettedMount);
     }
 
-    // This kicks off hte coroutine which changes the perspective
+    // This kicks off the coroutine which changes the perspective
     public void startSwitch(PlayerMount targettedMount)
     {
         stopLoad();
         OnStartSwitch();
         audio.Play();
-        StartCoroutine(switchPerspective(targettedMount));
+        lastCoroutine = StartCoroutine(switchPerspective(targettedMount));
     }
 
     // Here's the coroutine which moves the player to the new perspective
-    private IEnumerator switchPerspective(PlayerMount targettedMount)
+    protected IEnumerator switchPerspective(PlayerMount targettedMount)
     {
         Transform target = targettedMount.transform;
         float dist = (target.position - transform.position).magnitude;
-        Material mat = targettedMount.AvatarMaterial;
         while (dist > 0.4)
         {
             transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
             targettedMount.transform.rotation = Quaternion.Lerp(targettedMount.transform.rotation, this.transform.rotation, transferSpeed);
             //transform.rotation = target.rotation;// Quaternion.Lerp(transform.rotation, target.rotation, transferSpeed);
             dist = (target.position - transform.position).magnitude;
-            Color col = mat.GetColor("_Color");
-            col.a = Mathf.Lerp(col.a, 0, transferSpeed/2);
-            mat.SetColor("_Color", col);
             //targettedMount.avatarMaterial.SetColor("Albedo",)
             yield return null;
         }
@@ -134,7 +130,7 @@ public class PerspectiveSwitcher : MonoBehaviour {
     }
 
     // This is a utility function that gets the current targetted mount using it/s "IsOver" field.
-    private PlayerMount getTargettedMount()
+    protected PlayerMount getTargettedMount()
     {
         for (int i = 0; i < mounts.Length; i++)
         {
