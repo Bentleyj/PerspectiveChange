@@ -6,10 +6,12 @@ public class VisionFilter : MonoBehaviour {
 
     public PlayerMount[] mounts;
     int val;
+    public PerspectiveSwitcherBlink blink;
 	// Use this for initialization
 	void Awake () {
         mounts = FindObjectsOfType<PlayerMount>();
         val = -1;
+        blink = FindObjectOfType<PerspectiveSwitcherBlink>();
 	}
 
     private void Update()
@@ -24,10 +26,12 @@ public class VisionFilter : MonoBehaviour {
 
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
-        if (val > -1)
-            Graphics.Blit(source, destination, mounts[val].filter);
-        else
-            Graphics.Blit(source, destination);
+        //if (val > -1)
+        //    Graphics.Blit(source, destination, mounts[val].filter);
+        //else
+        //    Graphics.Blit(source, destination);
+
+        Graphics.Blit(source, destination, blink.mat);
     }
 
 }

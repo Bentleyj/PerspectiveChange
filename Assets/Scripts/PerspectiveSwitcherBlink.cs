@@ -11,12 +11,13 @@ using UnityEngine.UI;
 // All the coroutines make it look scary but it's actually pretty simple!
 
 // Basically This class subscribes to events called by VRInteractiveObjects in the scene. 
-// The PlayerMount script sits on a prefab in my scene which includes a VRInteractiveItem as well as the PlayerMount script whcih hold several fields that are useful. 
+// The PlayerMount script sits on a prefab in my scene which includes a VRInteractiveItem 
+// as well as the PlayerMount script which hold several fields that are useful. 
 public class PerspectiveSwitcherBlink : PerspectiveSwitcher {
 
     public Material mat;
     public new static event MountAction OnMount;
-    private float blinkAmount;
+    public float blinkAmount;
 
     // Use this for initialization
     new void Start () {
@@ -25,29 +26,36 @@ public class PerspectiveSwitcherBlink : PerspectiveSwitcher {
         blinkAmount = 0;
     }
 
+    new void Update()
+    {
+        base.Update();
+        mat.SetFloat("_BlinkAmount", blinkAmount);
+    }
+
     // Here's the coroutine which moves the player to the new perspective
     new private IEnumerator switchPerspective(PlayerMount targettedMount)
     {
         Transform target = targettedMount.transform;
-        while (blinkAmount < 1.0)
-        {
-            blinkAmount += transferSpeed/2;
-            //targettedMount.avatarMaterial.SetColor("Albedo",)
-            yield return null;
-        }
+        //while (blinkAmount < 1.0)
+        //{
+        //    blinkAmount += transferSpeed/2;
+        //    yield return null;
+        //}
         targettedMount.isMounted = true;
         transform.position = target.position;
-        for (int i = 0; i < targettedMount.mountableAvatarParts.Length; i++)
-        {
-            targettedMount.mountableAvatarParts[i].SetActive(false);
-        }
+        //for (int i = 0; i < targettedMount.mountableAvatarParts.Length; i++)
+        //{
+        //    targettedMount.mountableAvatarParts[i].SetActive(false);
+        //}
 
-        //yield return null;
-        while (blinkAmount > 0.0)
-        {
-            blinkAmount -= transferSpeed / 2;
-            yield return null;
-        }
+        ////yield return null;
+        //while (blinkAmount > 0.0)
+        //{
+        //    blinkAmount -= transferSpeed / 2;
+        //    yield return null;
+        //}
+
+
 
         //yield return null;
         //targettedMount.transform.rotation = this.transform.rotation;
@@ -55,10 +63,12 @@ public class PerspectiveSwitcherBlink : PerspectiveSwitcher {
 
         if (OnMount != null)
             OnMount();
+
+        yield return null;
     }
 
-    private void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        Graphics.Blit(source, destination, mat);
-    }
+    //private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    //{
+    //    Graphics.Blit(source, destination, mat);
+    //}
 }

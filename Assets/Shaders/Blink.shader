@@ -4,7 +4,7 @@
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		//_TexSize ("Texture Width", Vector) = (0, 0)
-		_BlinkAmount("Blink Amount", Float) = 0
+		_BlinkAmount ("Blink Amount", Float) = 0
 	}
 	SubShader
 	{

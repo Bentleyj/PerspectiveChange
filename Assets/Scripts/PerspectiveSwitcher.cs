@@ -101,32 +101,11 @@ public class PerspectiveSwitcher : MonoBehaviour {
     }
 
     // Here's the coroutine which moves the player to the new perspective
-    protected IEnumerator switchPerspective(PlayerMount targettedMount)
+    virtual protected IEnumerator switchPerspective(PlayerMount targettedMount)
     {
-        Transform target = targettedMount.transform;
-        float dist = (target.position - transform.position).magnitude;
-        while (dist > 0.4)
-        {
-            transform.position = Vector3.Lerp(transform.position, target.position, transferSpeed);
-            targettedMount.transform.rotation = Quaternion.Lerp(targettedMount.transform.rotation, this.transform.rotation, transferSpeed);
-            //transform.rotation = target.rotation;// Quaternion.Lerp(transform.rotation, target.rotation, transferSpeed);
-            dist = (target.position - transform.position).magnitude;
-            //targettedMount.avatarMaterial.SetColor("Albedo",)
-            yield return null;
-        }
-        //yield return null;
-        targettedMount.isMounted = true;
-        //targettedMount.transform.LookAt(this.transform.position + this.transform.forward);
-        for (int i = 0; i < targettedMount.mountableAvatarParts.Length; i++)
-        {
-            targettedMount.mountableAvatarParts[i].SetActive(false);
-        }
-        //yield return null;
-        targettedMount.transform.rotation = this.transform.rotation;
-        targettedMount.transform.SetParent(this.transform);
+        OnMount();
 
-        if (OnMount != null)
-            OnMount();
+        yield return null;
     }
 
     // This is a utility function that gets the current targetted mount using it/s "IsOver" field.
