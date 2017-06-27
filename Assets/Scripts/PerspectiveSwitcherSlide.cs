@@ -47,6 +47,6 @@ public class PerspectiveSwitcherSlide : PerspectiveSwitcher {
         targettedMount.transform.rotation = this.transform.rotation;
         targettedMount.transform.SetParent(this.transform);
 
-        base.switchPerspective();
+        //base.switchPerspective();
     }
 }
